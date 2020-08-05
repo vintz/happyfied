@@ -1,6 +1,6 @@
 {
   "name": "vz-apified",
-  "version": "1.0.6",
+  "version": "1.0.9",
   "description": "Create a rest API by creating a class in typescript",
   "scripts": {
     "start": "ts-node src/index.ts",
@@ -25,5 +25,9 @@
   },
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vintz/vz-apified"
   }
 }

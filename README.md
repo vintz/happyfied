@@ -80,3 +80,35 @@ The only parameter (for now) of the class constructor is the port of the webserv
 After that you can call the api at : http://localhost:2010/test?data=titi
 
 You can also find a list of all the available methods at : http://localhost:2010/routeslists
+
+# CAVEATS
+
+To use vz-apified, you have to enable decorators by adding the following entry in the compiler options of the tsconfig.json:
+```
+"experimentalDecorators": true,
+```
+
+Because of the way tsc manage the decorator, if you want to call some method or field from the class you're using, in the api method description you have to add a "self" parameter.
+
+For example:
+
+```javascript
+class ApifiedSample extends VzApified
+{
+    @GET_REST('Test api method')
+    public Test(data: string, self: ApifiedSample)
+    {
+        return Promise.resolve(self.doSomeWork(data));
+    }
+
+    private doSomeWork(data: string)
+    {
+        [... do some work]
+    }
+
+}
+```
+
+That means that you can't make an api request using a self parameter. 
+
+
