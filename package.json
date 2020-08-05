@@ -1,0 +1,29 @@
+{
+  "name": "vz-apified",
+  "version": "1.0.6",
+  "description": "Create a rest API by creating a class in typescript",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon --watch './**/*.ts' --exec \"ts-node\" index.ts",
+    "build": "tsc",
+    "prepare": "tsc"
+  },
+  "keywords": [
+    "API",
+    "express",
+    "REST"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Vincent Creteau",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^4.17.4",
+    "nodemon": "^2.0.2",
+    "ts-node": "^8.8.2",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

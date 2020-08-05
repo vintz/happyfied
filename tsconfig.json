@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "experimentalDecorators": true,
+      "target": "es6",
+      "module": "commonjs",
+      "removeComments": false,
+      "outDir": "./dist",
+      "declaration": true
+    },
+    "exclude": [
+      "node_modules",
+      "dist"
+    ]
+  }
