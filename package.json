@@ -24,7 +24,9 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "@types/socket.io": "^2.1.10",
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
   },
   "repository": {
     "type": "git",
