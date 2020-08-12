@@ -15,7 +15,7 @@ interface ISocketEvent
 
 export class VzSocketified 
 {
-    private io: socketio.Server;
+    protected io: socketio.Server;
 
     constructor(portOrWebservice: number|VzApified)
     {
@@ -30,6 +30,7 @@ export class VzSocketified
             this.io = socketio(server);
             server.listen(ws.GetPort());
         }
+        this.handleSocketConnection();
     }
 
     public Init = (socket: socketio.Socket) =>
@@ -46,7 +47,10 @@ export class VzSocketified
             {
                 const currentEvent = events[idx];
                 socket.on(currentEvent.Name,  (...args: any[]) => this.manageCall(socket, currentEvent.Target, currentEvent.Params, currentEvent.Exec, ...args));
-                
+                if (currentEvent.Name == 'connection')
+                {
+                    this.manageCall(socket, currentEvent.Target, currentEvent.Params, currentEvent.Exec, []);
+                }
             }
         }
     }
@@ -55,20 +59,19 @@ export class VzSocketified
     {
         const params = [];
         let offset = 0;
-        
         for (let idx = 0; idx < paramList.length; idx++)
         {
             const param = paramList[idx];
             switch(param)
             {
                 case 'self':
-                    params.push(target);
                     offset++;
+                    params.push(target);
                     break;
 
-                case 'socket': 
+                case 'socket':
+                    offset++; 
                     params.push(socket);
-                    offset++;
                     break;
 
                 default: 
@@ -84,7 +87,7 @@ export class VzSocketified
                     break;
             }
         }
-        fct(params);
+        fct(...params);
     }
 
     
@@ -98,7 +101,7 @@ export class VzSocketified
 }
 
 
-function SOCKET_EVENT()
+export function SOCKET_EVENT()
 {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const parametersList = CodeExtractor.GetParams(descriptor.value);

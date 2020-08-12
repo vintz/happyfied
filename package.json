@@ -1,10 +1,10 @@
 {
   "name": "vz-apified",
-  "version": "1.0.9",
+  "version": "1.1.4",
   "description": "Create a rest API by creating a class in typescript",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "nodemon --watch './**/*.ts' --exec \"ts-node\" index.ts",
+    "dev": "nodemon --watch './**/*.ts' --exec \"ts-node\" ./src/test.ts",
     "build": "tsc",
     "prepare": "tsc"
   },

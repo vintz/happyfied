@@ -230,10 +230,11 @@ function restCreate(description: string, type: RouteType, isParam?: boolean)
 {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const parametersList = CodeExtractor.GetParams(descriptor.value);
-        
+        const path = propertyKey == '_'?'' + (isParam?':id':''):propertyKey +  (isParam?'/:id':'');
         const route: IRoute =
         {
-            Path: '/'+ propertyKey + (isParam?'/:id':'') ,
+            
+            Path: '/'+ path,
             Exec: descriptor.value,
             Params: parametersList,
             Target: target, 
