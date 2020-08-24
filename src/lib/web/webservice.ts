@@ -16,7 +16,7 @@ export interface IRoute
     Target: any;
     Params: string[];
     Description: string;
-    UriParam: string;
+    UriParams: string[];
 }
 
 export interface IWSError
@@ -123,7 +123,7 @@ export class VzApified
         this.service.get(path, exec);
     }
 
-    private manageCall = (req, res, next, target: VzRouter, paramList: string[], uriParam: string, fct: (...params:any[])=>Promise<string|{}>) =>
+    private manageCall = (req, res, next, target: VzRouter, paramList: string[], uriParams: string[], fct: (...params:any[])=>Promise<string|{}>) =>
     {
         const params = [];
         if (paramList)
@@ -140,9 +140,12 @@ export class VzApified
             }
             for(let idx = 0; idx < paramList.length; idx++)
             {
-                if (uriParam)
+                if (uriParams)
                 {
-                    dataSrc[uriParam] = req.params[uriParam];
+                    for(let idx = 0; idx <uriParams.length; idx++)
+                    {
+                        dataSrc[uriParams[idx]] = req.params[uriParams[idx]];
+                    }
                 }
                 const paramName = paramList[idx];
                 let val = dataSrc[paramName]
@@ -177,8 +180,6 @@ export class VzApified
             {
                 res.status(err.Code).send(err.Message);
             })
-            
-
         }
     }
 
@@ -191,13 +192,13 @@ export class VzApified
             switch(current.Type)
             {
                 case RouteType.GET:
-                    this.service.get(current.Path, (req, res, next) => this.manageCall(req, res, next, current.Target, current.Params, current.UriParam, current.Exec));
+                    this.service.get(current.Path, (req, res, next) => this.manageCall(req, res, next, current.Target, current.Params, current.UriParams, current.Exec));
                     break;
                 case RouteType.POST:
-                    this.service.post(current.Path, (req, res, next) => this.manageCall(req, res, next, current.Target, current.Params, current.UriParam, current.Exec));
+                    this.service.post(current.Path, (req, res, next) => this.manageCall(req, res, next, current.Target, current.Params, current.UriParams, current.Exec));
                     break;
                 default: 
-                    this.service.use(current.Path, (req, res, next) => this.manageCall(req, res, next, current.Target, current.Params, current.UriParam, current.Exec));
+                    this.service.use(current.Path, (req, res, next) => this.manageCall(req, res, next, current.Target, current.Params, current.UriParams, current.Exec));
                     break;
             }
             
@@ -215,30 +216,49 @@ export class VzApified
     }    
 }
 
-export function GET_REST(description, isParam?:boolean)
+export function GET_REST(description, params?: Array<string>|boolean)
 {
-   return restCreate(description, RouteType.GET, isParam);
+   return restCreate(description, RouteType.GET, params);
 }
 
-export function POST_REST(description, isParam?:boolean)
+export function POST_REST(description, params?: Array<string>|boolean)
 {
-   return restCreate(description, RouteType.POST, isParam);
-
+   return restCreate(description, RouteType.POST, params);
 }
 
-function restCreate(description: string, type: RouteType, isParam?: boolean)
+function restCreate(description: string, type: RouteType, params?: Array<string>|boolean)
 {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const parametersList = CodeExtractor.GetParams(descriptor.value);
-        const path = propertyKey == '_'?'' + (isParam?':id':''):propertyKey +  (isParam?'/:id':'');
+        
+        let paramsQuery = '';
+        if (params)
+        {
+            if (params === true)
+            {
+                paramsQuery = '/:id';
+            }
+            else 
+            {
+                for(let idx = 0; idx < params.length; idx++)
+                {
+                    const currentParam = params[idx].trim();
+                    if (currentParam != '')
+                    {
+                        paramsQuery += '/:'+currentParam;
+                    }
+                }
+                
+            }
+
+        }
         const route: IRoute =
         {
-            
-            Path: '/'+ path,
+            Path: '/'+ propertyKey + paramsQuery ,
             Exec: descriptor.value,
             Params: parametersList,
             Target: target, 
-            UriParam: isParam?'id':null,
+            UriParams: (params === true?['id']:<string[]>params),
             Description: description,
             Type: type
         }

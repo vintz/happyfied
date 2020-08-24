@@ -1,6 +1,6 @@
 {
   "name": "vz-apified",
-  "version": "1.1.4",
+  "version": "1.1.7",
   "description": "Create a rest API by creating a class in typescript",
   "scripts": {
     "start": "ts-node src/index.ts",
