@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as bodyparser from 'body-parser';
 import {CodeExtractor} from './codeextractor';
 import {VzRouter} from './router';
+import { Server } from 'http';
 export enum RouteType
 {
     POST,
@@ -37,6 +38,7 @@ export class VzApified
     protected routesList: string = '';
     protected port: number;
     protected routers: VzRouter[] = [];
+    protected server: Server;
 
     constructor(port: number)
     {
@@ -84,7 +86,15 @@ export class VzApified
                 this.AddRoute(routes[idx]);
             }
         }
-        this.service.listen(this.port);
+        this.server = this.service.listen(this.port);
+    }
+
+    public Stop()
+    {
+        if (this.server)
+        {
+            this.server.close();
+        }
     }
 
     public AddRouter(router: VzRouter)
