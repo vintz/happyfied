@@ -3,7 +3,6 @@ export {Happyfied as VzApified} from './lib/web/happyfied';
 export {HappyRouter} from './lib/web/router';
 export {HappyRouter as VzRouter} from './lib/web/router';
 export {Socketified, SOCKET_EVENT} from './lib/web/socket';
-export {Socketified as VzSocketified} from './lib/web/socket';
 
 
 

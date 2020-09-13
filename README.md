@@ -105,7 +105,7 @@ The library also contains a socket management part.
 This is used the same way as the REST management. 
 
 ```typescript
-import {Socketified, SOCKET_EVENT} from './index';
+import {Socketified, SOCKET_EVENT} from 'happyfied';
 
 class Socket1 extends Socketified
 {
