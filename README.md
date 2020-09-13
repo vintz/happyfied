@@ -1,9 +1,9 @@
 
-![npm](https://img.shields.io/npm/v/happyfied)
-![NPM](https://img.shields.io/npm/l/happyfied)
-![npm type definitions](https://img.shields.io/npm/types/happyfied)
-![npm](https://img.shields.io/npm/dt/happyfied)
-![npm bundle size](https://img.shields.io/bundlephobia/min/happyfied)
+![npm](https://img.shields.io/npm/v/happyfied.svg)
+![NPM](https://img.shields.io/npm/l/happyfied.svg)
+![npm type definitions](https://img.shields.io/npm/types/happyfied.svg)
+![npm](https://img.shields.io/npm/dt/happyfied.svg)
+![npm bundle size](https://img.shields.io/bundlephobia/min/happyfied.svg)
 
 ```typescript
 import {Happyfied, GET} from 'Happyfied';
