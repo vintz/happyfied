@@ -5,6 +5,8 @@
 ![npm](https://img.shields.io/npm/dt/happyfied.svg)
 ![npm bundle size](https://img.shields.io/bundlephobia/min/happyfied.svg)
 
+![GitHub issues](https://img.shields.io/github/issues/vintz/happyfied)
+
 ```typescript
 import {Happyfied, GET} from 'Happyfied';
 
