@@ -1,7 +1,7 @@
 
 export class CodeExtractor
 {
-    public static GetParams(func) { 
+    public static GetParams(func, lowercase?:boolean) { 
           
         // String representaation of the function code 
         let str = func.toString(); 
@@ -29,10 +29,18 @@ export class CodeExtractor
         result.forEach(element => { 
               
             // Removing any default value 
-            element = element.replace(/=[\s\S]*/g, '').trim(); 
+            let varname = (<string>element).replace(/=[\s\S]*/g, '').trim(); 
       
-            if(element.length > 0) 
-                params.push(element); 
+            if(varname.length > 0) 
+                if (lowercase)
+                {
+                    params.push(varname.toLowerCase()); 
+                }
+                else 
+                {
+                    params.push(varname); 
+                    
+                }
         }); 
           
         return params; 

@@ -1,6 +1,6 @@
-import { IRoute } from "./webservice";
+import { IRoute } from "./happyfied";
 
-export class VzRouter
+export class HappyRouter
 {
     private baseRoute;
     constructor(baseRoute)

@@ -1,18 +1,23 @@
 
+![npm](https://img.shields.io/npm/v/happyfied)
+![NPM](https://img.shields.io/npm/l/happyfied)
+![npm type definitions](https://img.shields.io/npm/types/happyfied)
+![npm](https://img.shields.io/npm/dt/happyfied)
+![npm bundle size](https://img.shields.io/bundlephobia/min/happyfied)
 
 ```typescript
-import {VzApified, GET_REST} from 'vz-apified';
+import {Happyfied, GET} from 'Happyfied';
 
-class ApifiedSample extends VzApified
+class HappyfiedSample extends Happyfied
 {
-    @GET_REST('Test api method')
+    @GET('Test api method')
     public Test(data: string)
     {
         return Promise.resolve({data: data, result: true});
     }
 }
 
-const api = new ApifiedSample(2010);
+const api = new HappyfiedSample(2010);
 api.start();
 
 ```
@@ -22,7 +27,7 @@ This is a nodejs Typescript module.
 
 Installation is done using the npm install command:
 
-$ npm install vz-apified
+$ npm install happyfied
 
 To use it, you have to enable decorators by adding the following entry in the compiler options of the tsconfig.json:
 ```
@@ -34,16 +39,16 @@ To use it, you have to enable decorators by adding the following entry in the co
 The first thing to do is to import the parent class and the decorators
 
 ```typescript
-import {VzApified, GET_REST, POST_REST} from 'vz-apified';
+import {Happyfied, GET, POST} from 'Happyfied';
 ```
 
-After that you have to create a class extending the VzApified class. Any method that has a GET_REST or POST_REST decorator will be transformed into an API method with the same name and the same parameters.
+After that you have to create a class extending the Happyfied class. Any method that has a GET or POST decorator will be transformed into an API method with the same name and the same parameters.
 The decorators are used as methods with a single parameter that should describe the API method
 
 ```typescript
-class ApifiedSample extends VzApified
+class HappyfiedSample extends Happyfied
 {
-    @GET_REST('Test api method')
+    @GET('Test api method')
     public Test(data: string)
     {
         return Promise.resolve({data: data, result: true});
@@ -58,9 +63,9 @@ class ApifiedSample extends VzApified
 }
 ```
 
-The class methods have to return a Promise. 
-If the promise succeeds, the return can be of any type and it will be send to the caller with a 200 status. 
-If the promise fails, the return have to be in the form : 
+The class methods can return a Promise, a string, a number or a JSON. 
+If the return is a promise and the promise succeeds, the return can be  a string, a number or a JSON and it will be send to the caller with a 200 status. 
+If the promise fails, the return have to be  a string, an error or a JSON in the form : 
 ```typescript 
 {
     Code: 400,
@@ -68,14 +73,25 @@ If the promise fails, the return have to be in the form :
 }
 ```
 where Code is the error status of the request and Message is a text explaining the problem.
+If the failure return is just a string or an error, the return status will always be 400.
+
+If the return is not a promise, the return will be send to the user with a 200 status.
+
 
 After that you just have to instantiate the class and start the server
 ```typescript 
-const api = new ApifiedSample(2010);
+const api = new HappyfiedSample(2010);
 api.start();
 ```
 
-The only parameter (for now) of the class constructor is the port of the webserver.
+The class constructor has two parameters:
+- the server port 
+- A boolean that indicate if the app should use Express instead of the internal webserver. This parameter is optional. If it is not set, the app will use the internal server. If you want to use Express, you have to install it by yourself with the following command: 
+
+$ npm install express
+
+*Be aware that for the moment being, the internal server is much simpler and may be more buggy than Express.*
+
 
 After that you can call the api at : http://localhost:2010/test?data=titi
 
@@ -87,9 +103,9 @@ The library also contains a socket management part.
 This is used the same way as the REST management. 
 
 ```typescript
-import {VzSocketified, SOCKET_EVENT} from './index';
+import {Socketified, SOCKET_EVENT} from './index';
 
-class Socket1 extends VzSocketified
+class Socket1 extends Socketified
 {
     constructor(port: number)
     {
@@ -119,21 +135,21 @@ const socket = new Socket1(2010);
 
 ```
 
-You can link a VzApified class to a VzSocket one to have the socket and the REST on the same port.
+You can link a Happyfied class to a Socketified one to have the socket and the REST on the same port.
 
 ```typescript
-import {VzApified, VzSocketified, SOCKET_EVENT} from './index';
+import {Happyfied, Socketified, SOCKET_EVENT} from './index';
 
 import * as io from 'socket.io-client'
 
 
-class RestApi extends VzApified
+class RestApi extends Happyfied
 {
     [...]
 }
-class Socket1 extends VzSocketified
+class Socket1 extends Socketified
 {
-    constructor(api: VzApified)
+    constructor(api: Happyfied)
     {
         super(api);
     }
@@ -147,7 +163,7 @@ const socket = new Socket(api);
 
 # CAVEATS
 
-To use vz-apified, you have to enable decorators by adding the following entry in the compiler options of the tsconfig.json:
+To use Happyfied, you have to enable decorators by adding the following entry in the compiler options of the tsconfig.json:
 ```
 "experimentalDecorators": true,
 ```
@@ -157,12 +173,12 @@ Because of the way tsc manage the decorator, if you want to call some method or 
 For example:
 
 ```typescript
-class ApifiedSample extends VzApified
+class HappyfiedSample extends Happyfied
 {
-    @GET_REST('Test api method')
-    public Test(data: string, self: ApifiedSample)
+    @GET('Test api method')
+    public Test(data: string, self: HappyfiedSample)
     {
-        return Promise.resolve(self.doSomeWork(data));
+        return self.doSomeWork(data);
     }
 
     private doSomeWork(data: string)
@@ -174,5 +190,24 @@ class ApifiedSample extends VzApified
 ```
 
 That means that you can't make an api request using a self parameter. 
+
+Happyfied can now be used without the express dependency. If you want to use Happyfied with Express, you have to install Express manually 
+```bash
+npm install express
+```
+
+After that, you have to call the Happyfied constructor with a second parameter as true
+
+```typescript
+
+class HappyfiedSample extends Happyfied
+{
+    constructor(port: number)
+    {
+        super(port, true); // the second parameter indicate if the Happyfied class should use Express instead of the internal "webserver"
+    }
+}
+
+```
 
 

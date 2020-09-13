@@ -1,5 +1,5 @@
 import * as socketio from "socket.io";
-import { VzApified } from "./webservice";
+import { Happyfied } from "./happyfied";
 
 import {Server as HTTPServer, createServer} from 'http';
 import { CodeExtractor } from "./codeextractor";
@@ -13,11 +13,11 @@ interface ISocketEvent
     Params: string[];
 }
 
-export class VzSocketified 
+export class Socketified 
 {
     protected io: socketio.Server;
 
-    constructor(portOrWebservice: number|VzApified)
+    constructor(portOrWebservice: number|Happyfied)
     {
         if (typeof portOrWebservice == 'number')
         {
@@ -25,7 +25,7 @@ export class VzSocketified
         }
         else 
         {
-            const ws = <VzApified> portOrWebservice;
+            const ws = <Happyfied> portOrWebservice;
             const server = createServer(ws.GetApplication());
             this.io = socketio(server);
             server.listen(ws.GetPort());
@@ -55,7 +55,7 @@ export class VzSocketified
         }
     }
     
-    private manageCall = (socket: socketio.Socket, target: VzSocketified, paramList: string[],  fct: (...params:any[])=>Promise<string|{}>, ...args:any[]) =>
+    private manageCall = (socket: socketio.Socket, target: Socketified, paramList: string[],  fct: (...params:any[])=>Promise<string|{}>, ...args:any[]) =>
     {
         const params = [];
         let offset = 0;

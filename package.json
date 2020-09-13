@@ -1,10 +1,10 @@
 {
-  "name": "vz-apified",
-  "version": "1.1.8",
+  "name": "happyfied",
+  "version": "1.2.2",
   "description": "Create a rest API by creating a class in typescript",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "nodemon --watch './**/*.ts' --exec \"ts-node\" ./src/test.ts",
+    "dev": "nodemon --watch './**/*.ts' --exec \"ts-node\" ./src/lib/innerweb/test.ts",
     "build": "tsc",
     "prepare": "tsc",
     "test": "mocha -r ts-node/register test/testapi.ts"
@@ -25,11 +25,11 @@
     "mocha": "^8.1.1",
     "nodemon": "^2.0.2",
     "ts-node": "^8.8.2",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "express": "^4.17.1"
   },
   "dependencies": {
     "@types/socket.io": "^2.1.10",
-    "express": "^4.17.1",
     "socket.io": "^2.3.0"
   },
   "repository": {
