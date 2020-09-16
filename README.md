@@ -162,15 +162,17 @@ const api = new RestApi(2010);
 const socket = new Socket(api);
 
 ```
+# Special parameters
 
-# CAVEATS
+There are some special parameters that can be used in the method declaration to access information from the request. 
+Every special parameter starts with a _ (underscore) symbol.
 
-To use Happyfied, you have to enable decorators by adding the following entry in the compiler options of the tsconfig.json:
-```
-"experimentalDecorators": true,
-```
+## self or _self 
 
-Because of the way tsc manage the decorator, if you want to call some method or field from the class you're using, in the api method description you have to add a "self" parameter.
+This parameter can be used to access the current class object.
+Because of the way tsc manage the decorator, if you want to call some method or field from the class you're using, in the api method description you have to add a "_self" parameter.
+
+The best behavior is to use the *_self* parameter instead of the *self* because the latter one is just kept because of retrocompatibility problems.
 
 For example:
 
@@ -178,9 +180,9 @@ For example:
 class HappyfiedSample extends Happyfied
 {
     @GET('Test api method')
-    public Test(data: string, self: HappyfiedSample)
+    public Test(data: string, _self: HappyfiedSample)
     {
-        return self.doSomeWork(data);
+        return _self.doSomeWork(data);
     }
 
     private doSomeWork(data: string)
@@ -192,6 +194,42 @@ class HappyfiedSample extends Happyfied
 ```
 
 That means that you can't make an api request using a self parameter. 
+
+## _method 
+
+This parameter return the method(verb) used in the current request. 
+
+```typescript
+class HappyfiedSample extends Happyfied
+{
+    @USE('Test api method')
+    public Test(data: string, _method: string)
+    {
+        return { data: data, method: _method};
+    }
+}
+```
+If the previous code is called using a GET method, the response will be 
+```JSON
+{
+    "data":"data sent",
+    "method": "GET"
+}
+```
+If is called with a PATCH method, the response will be
+```JSON
+{
+    "data":"data sent",
+    "method": "PATCH"
+}
+```
+
+# CAVEATS
+
+To use Happyfied, you have to enable decorators by adding the following entry in the compiler options of the tsconfig.json:
+```
+"experimentalDecorators": true,
+```
 
 Happyfied can now be used without the express dependency. If you want to use Happyfied with Express, you have to install Express manually 
 ```bash

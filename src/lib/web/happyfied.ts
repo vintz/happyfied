@@ -18,7 +18,11 @@ export enum RouteType
     POST = "POST",
     GET = "GET",
     USE = "USE",
-    BEFORE = "BEFORE"
+    BEFORE = "BEFORE",
+    HEAD = "HEAD",
+    PUT  = "PUT",
+    DELETE = "DELETE",
+    PATCH = "PATCH"
 }
 
 export enum CallType
@@ -170,20 +174,17 @@ export class Happyfied
         let result = '';
         switch(type)
         {
-            case RouteType.GET: 
-                result = 'GET';
-                break;
-            case RouteType.POST: 
-                result = 'POST';
-                break;
             case RouteType.USE:
                 result = 'ALL';
+                break;
+            default: 
+                result = type;
                 break;
         }
         return result;
     }
    
-    protected checkParams = (paramList: string[], uriParams: string[], params: any[], target, dataSrc: {[id:string]: any}, req, res) =>
+    protected checkParams = (paramList: string[], uriParams: string[], params: any[], target, dataSrc: {[id:string]: any}, req: express.Request|IncomingMessage, res) =>
     {
         for(let idx = 0; idx < paramList.length; idx++)
         {
@@ -196,10 +197,16 @@ export class Happyfied
             }
             const paramName = paramList[idx];
             let val = dataSrc[paramName];
-            if (paramName.toLowerCase() == 'self')
+            if (paramName.toLowerCase() == 'self' || paramName.toLowerCase() == '_self')
             {
                 val = target;
             } 
+            
+            if (paramName.toLowerCase() == '_method')
+            {
+                val = req.method;
+            }
+
             if (val)
             {
                 params.push(val);
@@ -464,8 +471,29 @@ export function POST_REST(description, params?: Array<string>|boolean|IOptions)
    return restCreate(description, RouteType.POST, params);
 }
 
+export function HEAD(description, params?: Array<string>|boolean|IOptions)
+{
+   return restCreate(description, RouteType.HEAD, params);
+}
+
+export function PUT(description, params?: Array<string>|boolean|IOptions)
+{
+   return restCreate(description, RouteType.PUT, params);
+}
+
+export function DELETE(description, params?: Array<string>|boolean|IOptions)
+{
+   return restCreate(description, RouteType.DELETE, params);
+}
+
+export function PATCH(description, params?: Array<string>|boolean|IOptions)
+{
+   return restCreate(description, RouteType.PATCH, params);
+}
+
 export function BEFORE(description)
 {
+    // TODO VERIFIER
     return restCreate(description, RouteType.BEFORE, null);
 }
 
@@ -473,6 +501,7 @@ export function USE(description, params?: Array<string>|boolean|IOptions)
 {
     return restCreate(description, RouteType.USE, params);
 }
+export 
 
 function restCreate(description: string, type: RouteType, params?: Array<string>|boolean|IOptions)
 {

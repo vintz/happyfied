@@ -1,4 +1,4 @@
-import {Happyfied, GET, USE, BEFORE, POST} from '../src/index';
+import {Happyfied, GET, USE, BEFORE, POST, HEAD, PUT, DELETE, PATCH } from '../src/index';
 
 import * as Http from 'http';
 
@@ -41,13 +41,13 @@ export class TestApi extends Happyfied
       return result;
     }
 
-    @USE('Static call', {wildcard: true, static: './pub'})
+    @USE('Static call', {wildcard: true, static: './test/pub'})
     public Public(self: Happyfied)
     {
      
     }
 
-    @USE('Static call', { static: './pub'})
+    @USE('Static call', { static: './test/pub'})
     public TestFile(self: Happyfied)
     {
       return 'toto.txt';
@@ -61,6 +61,52 @@ export class TestApi extends Happyfied
         param2: param2,
         result: param2 + '/' + param1
       };
+    }
+
+    @HEAD('Test Head with parameters')
+    public TestHead(self: Happyfied, param1: string, param2: string)
+    {
+      return {
+        param1: param1,
+        param2: param2,
+        result: param2 + '/' + param1
+      };
+    }
+
+    @PUT('Test Put with parameters')
+    public TestPut(self: Happyfied, param1: string, param2: string)
+    {
+      return {
+        param1: param1,
+        param2: param2,
+        result: param2 + '/' + param1
+      };
+    }
+
+    @DELETE('Test Delete with parameters')
+    public TestDelete(self: Happyfied, param1: string, param2: string)
+    {
+      return {
+        param1: param1,
+        param2: param2,
+        result: param2 + '/' + param1
+      };
+    }
+
+    @PATCH('Test Patch with parameters')
+    public TestPatch(self: Happyfied, param1: string, param2: string)
+    {
+      return {
+        param1: param1,
+        param2: param2,
+        result: param2 + '/' + param1
+      };
+    }
+
+    @USE('Test multimethod with parameters')
+    public TestUse(self: Happyfied, _method: string)
+    {
+      return _method
     }
 
     @GET('Test error with simple string return')
@@ -282,8 +328,40 @@ export function launchTest()
       })
       req.write(data)
     });
-    
   });
+
+  describe('Test Http method management', () => {
+    it('should respond with "GET" (http://localhost:1999/testuse)', (done) => 
+    {
+      
+      Http.get('http://localhost:1999/testuse', (res)=>
+      {
+        httpCallBack(res,  (res2) => standardTest(res2, true, 'GET', done));
+      })
+    });
+
+    it('should respond with "POST" (http://localhost:1999/testuse)', (done) => 
+    {
+      const data = JSON.stringify({
+        param1: 'Buy the milk',
+        param3: "Don't forget the bread"
+      })
+      const options = 
+      {
+        method:"POST", headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': data.length,
+      }}
+      const req =  Http.request('http://localhost:1999/testuse', options, (res)=>
+      {
+        httpCallBack(res,  (res2) => standardTest(res2, true, 'POST', done));
+      })
+      req.write(data)
+    });
+
+
+  })
+
   describe('Test Error management', () => {
     it('should respond with a 400 status and error "CRASHED" (http://localhost:1999/error1)', (done) => 
     {
