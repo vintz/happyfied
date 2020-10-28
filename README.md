@@ -45,7 +45,7 @@ import {Happyfied, GET, POST} from 'Happyfied';
 ```
 
 After that you have to create a class extending the Happyfied class. Any method that has a GET or POST decorator will be transformed into an API method with the same name and the same parameters.
-The decorators are used as methods with a single parameter that should describe the API method
+The decorators are used as methods with a single parameter that should describe the API method. There is an optional second parameter that gives more options (see in the documentation)
 
 ```typescript
 class HappyfiedSample extends Happyfied

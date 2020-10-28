@@ -1,10 +1,16 @@
-import * as express from 'express';
-import * as bodyparser from 'body-parser';
+
+
 import {CodeExtractor} from './codeextractor';
 import {HappyRouter} from './router';
 import { Server } from 'http';
-import * as Path from 'path';
 import { HappyServer, IncomingMessage, ServerResponse } from '../innerweb/innerwebservice';
+
+import {Request, Response} from 'express';
+
+ 
+
+
+
 
 export interface IOptions
 {
@@ -54,13 +60,6 @@ export interface IWSError
     Message: string;
 }
 
-interface Request extends express.Request
-{
-/*  body: any;
-    query: any;
-    params: any;
-    headers: any;*/
-}
 const WebserviceError = 
 {
     MissingParameter: 'MISSING_PARAMETER',
@@ -73,22 +72,20 @@ const API_LIST_ROUTE = '/routeslist';
 
 export class Happyfied 
 {
-    
-    
-    protected express: express.Express;
+    protected express: any;
     protected happyServer: HappyServer;
     protected routesList: string = '';
     protected port: number;
     protected routers: HappyRouter[] = [];
     protected server: Server;
-
+    
     constructor(port: number, useExpress?: boolean)
     {
         if(useExpress)
         {
-            this.express = express();
-            this.express.use(bodyparser.json());
-            this.express.use(bodyparser.urlencoded({ extended: true }));
+            this.express = require('express')();
+            this.express.use(require('body-parser').json());
+            this.express.use(require('body-parser').urlencoded({ extended: true }));
             this.express.use(API_LIST_ROUTE, this.listAllRoutes);
         }
         else 
@@ -99,7 +96,7 @@ export class Happyfied
         
         this.port = port;
     }
-
+    
     public Init()
     {
         if(this['__routes'])
@@ -184,7 +181,7 @@ export class Happyfied
         return result;
     }
    
-    protected checkParams = (paramList: string[], uriParams: string[], params: any[], target, dataSrc: {[id:string]: any}, req: express.Request|IncomingMessage, res) =>
+    protected checkParams = (paramList: string[], uriParams: string[], params: any[], target, dataSrc: {[id:string]: any}, req: Request|IncomingMessage, res) =>
     {
         for(let idx = 0; idx < paramList.length; idx++)
         {
@@ -250,11 +247,11 @@ export class Happyfied
         }
     }
 
-    protected respond(res: express.Response<any> | ServerResponse, code: number, message: string) 
+    protected respond(res: Response<any> | ServerResponse, code: number, message: string) 
     {
         if (this.express)
         {
-            const res2 = <express.Response<any>> res;
+            const res2 = <Response<any>> res;
             res2.status(code).send(message);
         }
         else 
@@ -264,11 +261,11 @@ export class Happyfied
         }
     }
 
-    protected respondJson(res: express.Response<any> | ServerResponse, code: number, message: {}) 
+    protected respondJson(res: Response<any> | ServerResponse, code: number, message: {}) 
     {
         if (this.express)
         {
-            const res2 = <express.Response<any>> res;
+            const res2 = <Response<any>> res;
             res2.status(code).json(message);
         }
         else 
@@ -278,7 +275,7 @@ export class Happyfied
         }
     }
 
-    protected manageMiddleware = (type: CallType, req: express.Request|IncomingMessage, res: express.Response|ServerResponse, routePath: string, next, target: HappyRouter, paramList: string[], uriParams: string[], fct: (...params: any[]) =>Promise<{}>) =>
+    protected manageMiddleware = (type: CallType, req: Request|IncomingMessage, res: Response|ServerResponse, routePath: string, next, target: HappyRouter, paramList: string[], uriParams: string[], fct: (...params: any[]) =>Promise<{}>) =>
     {
         let params = [];
         let dataSrc = this.mergeParams(req.body, req.query, req.headers);
@@ -337,7 +334,7 @@ export class Happyfied
         })
     }
     
-    public parseCallResult = (result: string|number|{}, req: express.Request|IncomingMessage, res: express.Response|ServerResponse, routePath: string) =>
+    public parseCallResult = (result: string|number|{}, req: Request|IncomingMessage, res: Response|ServerResponse, routePath: string) =>
     {
         if (typeof result == 'string')
         {
@@ -364,12 +361,12 @@ export class Happyfied
         }
     }
 
-    protected manageSimpleMiddleware = (req: express.Request|IncomingMessage, res: express.Response|ServerResponse, next, target: HappyRouter, paramList: string[], fct: (...params: any[]) =>Promise<{}>) =>
+    protected manageSimpleMiddleware = (req: Request|IncomingMessage, res: Response|ServerResponse, next, target: HappyRouter, paramList: string[], fct: (...params: any[]) =>Promise<{}>) =>
     {
         this.manageMiddleware(CallType.SimpleMiddleware, req, res, null, next, target, paramList, null, fct);
     }
     
-    private manageCall = (req: express.Request|IncomingMessage, res: express.Response|ServerResponse, next, target: HappyRouter, routePath: string,  paramList: string[], uriParams: string[], fct: (...params:any[])=>Promise<string|{}>) =>
+    private manageCall = (req: Request|IncomingMessage, res: Response|ServerResponse, next, target: HappyRouter, routePath: string,  paramList: string[], uriParams: string[], fct: (...params:any[])=>Promise<string|{}>) =>
     {
         this.manageMiddleware(CallType.Call, req, res, routePath, next, target, paramList, uriParams, fct);
     }
@@ -433,14 +430,14 @@ export class Happyfied
                 break;
         }
     }
-    protected listAllRoutes = (req: express.Request|IncomingMessage, res: express.Response|ServerResponse, next)=>
+    protected listAllRoutes = (req: Request|IncomingMessage, res: Response|ServerResponse, next)=>
     {
         this.respond(res, 200, this.routesList);
     }    
 
     protected static = (path) =>
     {
-        return express.static(path);
+        return this.express.static(path);
     }
 }
 
