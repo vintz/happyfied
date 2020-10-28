@@ -4,6 +4,12 @@ import * as Http from 'http';
 
 export class TestApi extends Happyfied
 {
+    @GET('Main call')
+    public _()
+    {
+      return 'base';
+    }
+    
     @GET('Test simple GET api')
     public Test()
     {
@@ -19,7 +25,6 @@ export class TestApi extends Happyfied
     @GET('Test simple GET api with GET parameters')
     public Test3(id1, iD2)
     {
-      console.log(id1 + ' / ' + iD2)
       return 'ok 3';
     }
 
@@ -183,6 +188,14 @@ const errorTest = (res: {statusCode: number, body: string}, errorCode: number,  
 export function launchTest()
 {
   describe('Test simple GET api generation', () => {
+    it('should create a simple page (http://localhost:1999/)', (done) => 
+    {
+      Http.get('http://localhost:1999/', (res)=>
+      {
+        httpCallBack(res,  (res2) => standardTest(res2, true, 'base', done));
+      })
+    });
+
     it('should create a simple page (http://localhost:1999/test)', (done) => 
     {
       Http.get('http://localhost:1999/test', (res)=>

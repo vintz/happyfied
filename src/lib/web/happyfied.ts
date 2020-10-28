@@ -561,9 +561,10 @@ function restCreate(description: string, type: RouteType, params?: Array<string>
             }
         }
 
+        const basePath = propertyKey == '_'?'': propertyKey;
         const route: IRoute =
         {
-            Path: '/'+ propertyKey + paramsQuery ,
+            Path: '/'+ basePath + paramsQuery ,
             Exec: exec,
             Params: parametersList,
             Target: target, 

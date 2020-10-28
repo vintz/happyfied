@@ -79,7 +79,6 @@ export class ServerResponse
 
     public sendFile(path: string, options: ISendFileOptions, done:(err: Error)=>void)
     {
-
         const finalPath = this.getNormalizedPath(path, options);
         if (finalPath)
         {
@@ -153,6 +152,7 @@ export class HappyServer
         }
         return {Regexp: regexp, Ids: found};
     }
+
     public AddRoute(type: RouteType, path: string, exec: (req: IncomingMessage, res: ServerResponse, next: ()=>void) => void)
     {
         const truePath = path?path.trim().toLowerCase():null;
